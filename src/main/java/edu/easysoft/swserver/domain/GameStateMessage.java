@@ -7,7 +7,10 @@ import lombok.ToString;
 
 @ToString
 @Getter
+@Setter
 public class GameStateMessage {
+    @JsonProperty("playerID")
+    private int playerID;
     @JsonProperty("playGroundWalker")
     private PlayGroundWalker playGroundWalker;
 

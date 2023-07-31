@@ -11,10 +11,13 @@ import org.springframework.stereotype.Controller;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+import java.util.List;
 
 @Controller
 public class GameController {
+    private List<GameStateMessage> gameStateMessage = new ArrayList<>();
+    private int playerCounter;
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public OutputMessage send(Message message) throws Exception {
@@ -26,9 +29,18 @@ public class GameController {
     @MessageMapping("/game")
     @SendTo("/topic/walker")
     public GameStateMessage send(GameStateMessage message) throws Exception {
+        if(message.getPlayerID()==0){
+            message.setPlayerID(playerCounter++);
+        }
+        System.out.println("id= "+message.getPlayerID());
+        gameStateMessage.add(message);
 
         System.out.println(message.toString());
-        message.getPlayGroundWalker().setLocation(new Point(130,92));
+        if(gameStateMessage.size()-1>0)
+            message.getPlayGroundWalker().setLocation(gameStateMessage.get(gameStateMessage.size()-1).getPlayGroundWalker().getLocation());
+        else
+            System.out.println("nothing");
+            //message.getPlayGroundWalker().setLocation();
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         System.out.println(message.toString());
         return message;
